@@ -42,3 +42,11 @@ export function renderWorkout(workout, onAddSet) {
     })
   })
 }
+
+if (appData.workouts.length) {
+  const historyDiv = document.createElement("div")
+  historyDiv.innerHTML = "<h2>Historique</h2>" +
+    appData.workouts.map(w => `<div>${w.date} - ${w.exercises.length} exos</div>`).join("")
+  workoutDiv.appendChild(historyDiv)
+}
+

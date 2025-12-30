@@ -8,6 +8,7 @@ let appData = loadData() || {
 }
 
 const startBtn = document.getElementById("start-workout")
+const finishBtn = document.getElementById("finish-workout") // bouton à ajouter
 
 startBtn.addEventListener("click", () => {
   appData.currentWorkout = startWorkout(templates[0])
@@ -15,15 +16,20 @@ startBtn.addEventListener("click", () => {
   renderWorkout(appData.currentWorkout, onAddSet)
 })
 
-// callback quand on ajoute une série
 function onAddSet(exIndex, reps, weight) {
-  appData.currentWorkout.exercises[exIndex].sets.push({
-    reps,
-    weight
-  })
+  appData.currentWorkout.exercises[exIndex].sets.push({ reps, weight })
   saveData(appData)
   renderWorkout(appData.currentWorkout, onAddSet)
 }
+
+// Finir la séance → stocker dans l’historique
+finishBtn.addEventListener("click", () => {
+  if (!appData.currentWorkout) return
+  appData.workouts.push(appData.currentWorkout)
+  appData.currentWorkout = null
+  saveData(appData)
+  renderWorkout(null, onAddSet) // reset UI
+})
 
 // restauration au chargement
 if (appData.currentWorkout) {
