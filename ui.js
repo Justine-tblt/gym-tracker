@@ -1,52 +1,41 @@
-const workoutDiv = document.getElementById("workout")
-
-export function renderWorkout(workout, onAddSet) {
+// ui.js
+export function renderWorkout(currentWorkout, onAddSet, workouts = []) {
+  const workoutDiv = document.getElementById("workout")
   workoutDiv.innerHTML = ""
 
-  workout.exercises.forEach((exercise, index) => {
-    const exDiv = document.createElement("div")
+  if (!currentWorkout) {
+    workoutDiv.innerHTML = "<p>Aucune séance en cours</p>"
+  } else {
+    currentWorkout.exercises.forEach((exercise, index) => {
+      const exDiv = document.createElement("div")
+      exDiv.innerHTML = `
+        <h2>${exercise.name}</h2>
+        <ul>
+          ${exercise.sets.map(s => `<li>${s.reps} reps @ ${s.weight} kg</li>`).join("")}
+        </ul>
+        <input type="number" placeholder="Reps" class="reps">
+        <input type="number" placeholder="Poids (kg)" class="weight">
+        <button class="add">➕ Ajouter série</button>
+        <hr>
+      `
+      workoutDiv.appendChild(exDiv)
 
-    exDiv.innerHTML = `
-      <h2>${exercise.name}</h2>
-
-      <ul>
-        ${exercise.sets
-          .map(
-            s => `<li>${s.reps} reps @ ${s.weight} kg</li>`
-          )
-          .join("")}
-      </ul>
-
-      <input type="number" placeholder="Reps" id="reps-${index}">
-      <input type="number" placeholder="Charge (kg)" id="weight-${index}">
-      <button id="add-${index}">➕ Ajouter série</button>
-      <hr>
-    `
-
-    workoutDiv.appendChild(exDiv)
-
-    exDiv.querySelector(`#add-${index}`).addEventListener("click", () => {
-      const reps = Number(
-        exDiv.querySelector(`#reps-${index}`).value
-      )
-      const weight = Number(
-        exDiv.querySelector(`#weight-${index}`).value
-      )
-
-      if (!reps) return
-
-      onAddSet(index, reps, weight)
-
-      exDiv.querySelector(`#reps-${index}`).value = ""
-      exDiv.querySelector(`#weight-${index}`).value = ""
+      exDiv.querySelector(".add").addEventListener("click", () => {
+        const reps = Number(exDiv.querySelector(".reps").value)
+        const weight = Number(exDiv.querySelector(".weight").value)
+        if (!reps) return
+        onAddSet(index, reps, weight)
+        exDiv.querySelector(".reps").value = ""
+        exDiv.querySelector(".weight").value = ""
+      })
     })
-  })
-}
+  }
 
-if (appData.workouts.length) {
-  const historyDiv = document.createElement("div")
-  historyDiv.innerHTML = "<h2>Historique</h2>" +
-    appData.workouts.map(w => `<div>${w.date} - ${w.exercises.length} exos</div>`).join("")
-  workoutDiv.appendChild(historyDiv)
+  // Afficher l'historique
+  if (workouts.length > 0) {
+    const historyDiv = document.createElement("div")
+    historyDiv.innerHTML = "<h2>Historique des séances</h2>" +
+      workouts.map(w => `<div>${w.date} - ${w.exercises.length} exos</div>`).join("")
+    workoutDiv.appendChild(historyDiv)
+  }
 }
-

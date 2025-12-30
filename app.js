@@ -43,7 +43,7 @@ function attachFinishListener() {
     appData.workouts.push(appData.currentWorkout)
     appData.currentWorkout = null
     saveData(appData)
-    renderWorkout(null, onAddSet)
+    renderWorkout(appData.currentWorkout, onAddSet, appData.workouts)
     attachFinishListener() // ré-attacher après render
   }
 }
