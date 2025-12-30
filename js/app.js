@@ -1,6 +1,6 @@
-import { templates, startWorkout } from "./workout.js"
-import { loadData, saveData } from "./storage.js"
-import { renderWorkout } from "./ui.js"
+import { templates, startWorkout } from "./js/workout.js"
+import { loadData, saveData } from "./js/storage.js"
+import { renderWorkout } from "./js/ui.js"
 
 let appData = loadData() || {
   currentWorkout: null,
