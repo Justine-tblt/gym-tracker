@@ -4,18 +4,29 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gym Tracker</title>
-  <link rel="stylesheet" href="css/style.css">
+  <style>
+    body { font-family: sans-serif; padding: 1rem; max-width: 600px; margin: auto; }
+    button { margin: 0.5rem 0; padding: 0.5rem 1rem; }
+    .history-item { padding: 0.3rem 0; color: blue; }
+    .history-item:hover { text-decoration: underline; cursor: pointer; }
+    input { width: 60px; margin-right: 0.5rem; }
+  </style>
 </head>
 <body>
 
   <h1>Gym Tracker</h1>
 
+  <label for="select-workout">Choisir une séance :</label>
+  <select id="select-workout">
+    <option value="0">Séance A</option>
+    <option value="1">Séance B</option>
+    <option value="2">Séance C</option>
+    <option value="3">Séance D</option>
+  </select>
   <button id="start-workout">Nouvelle séance</button>
-
-  <div id="workout"></div>
-
   <button id="finish-workout">Terminer la séance</button>
 
+  <div id="workout"></div>
 
   <script type="module" src="app.js"></script>
 </body>

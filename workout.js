@@ -1,4 +1,3 @@
-// templates des séances
 export const templates = [
   {
     id: "A",
@@ -9,10 +8,19 @@ export const templates = [
     id: "B",
     name: "Séance B",
     exercises: ["Rowing", "Tractions", "Curl"]
+  },
+  {
+    id: "C",
+    name: "Séance C",
+    exercises: ["Squat", "Fentes", "Leg Curl"]
+  },
+  {
+    id: "D",
+    name: "Séance D",
+    exercises: ["Pompes", "Abdos", "Gainage"]
   }
 ]
 
-// fonction pour démarrer une séance
 export function startWorkout(template) {
   return {
     templateId: template.id,

@@ -2,48 +2,43 @@ import { templates, startWorkout } from "./workout.js"
 import { loadData, saveData } from "./storage.js"
 import { renderWorkout } from "./ui.js"
 
-// Chargement des données depuis localStorage ou initialisation
+// Chargement ou initialisation des données
 let appData = loadData() || {
   currentWorkout: null,
   workouts: []
 }
 
-// Récupération des boutons
+// Récupération des boutons et select
 const startBtn = document.getElementById("start-workout")
+const finishBtn = document.getElementById("finish-workout")
+const selectWorkout = document.getElementById("select-workout")
 
-// Fonction pour ajouter une série à un exercice
+// Fonction pour ajouter une série
 function onAddSet(exIndex, reps, weight) {
   if (!appData.currentWorkout) return
   appData.currentWorkout.exercises[exIndex].sets.push({ reps, weight })
   saveData(appData)
-  renderWorkout(appData.currentWorkout, onAddSet)
-  attachFinishListener()
+  renderWorkout(appData.currentWorkout, onAddSet, appData.workouts)
 }
 
 // Démarrer une nouvelle séance
 startBtn.addEventListener("click", () => {
-  appData.currentWorkout = startWorkout(templates[0])
+  const templateIndex = Number(selectWorkout.value)
+  appData.currentWorkout = startWorkout(templates[templateIndex])
   saveData(appData)
-  renderWorkout(appData.currentWorkout, onAddSet)
-  attachFinishListener()
+  renderWorkout(appData.currentWorkout, onAddSet, appData.workouts)
+})
+
+// Terminer la séance
+finishBtn.addEventListener("click", () => {
+  if (!appData.currentWorkout) return
+  appData.workouts.push(appData.currentWorkout)
+  appData.currentWorkout = null
+  saveData(appData)
+  renderWorkout(null, onAddSet, appData.workouts)
 })
 
 // Restaurer la séance en cours au chargement
 if (appData.currentWorkout) {
-  renderWorkout(appData.currentWorkout, onAddSet)
-  attachFinishListener()
-}
-
-// Fonction pour attacher le listener du bouton "Terminer la séance"
-function attachFinishListener() {
-  const finishBtn = document.getElementById("finish-workout")
-  if (!finishBtn) return
-  finishBtn.onclick = () => {
-    if (!appData.currentWorkout) return
-    appData.workouts.push(appData.currentWorkout)
-    appData.currentWorkout = null
-    saveData(appData)
-    renderWorkout(appData.currentWorkout, onAddSet, appData.workouts)
-    attachFinishListener() // ré-attacher après render
-  }
+  renderWorkout(appData.currentWorkout, onAddSet, appData.workouts)
 }
