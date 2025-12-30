@@ -48,8 +48,7 @@ export function renderWorkout(currentWorkout, onAddSet, workouts = []) {
     workouts.forEach((w, index) => {
       const item = document.createElement("div")
       item.className = "history-item"
-      const sessionNumber = index + 1
-      item.textContent = `Séance ${sessionNumber} - ${formatDate(w.date)}`
+      item.textContent = `Séance ${w.templateId} - ${formatDate(w.date)}`
 
       item.addEventListener("click", () => {
         // Afficher les détails complets
