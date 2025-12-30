@@ -1,3 +1,12 @@
+// Fonction pour formater la date ISO en dd/mm/yyyy
+function formatDate(isoString) {
+  const d = new Date(isoString)
+  const day = String(d.getDate()).padStart(2, "0")
+  const month = String(d.getMonth() + 1).padStart(2, "0")
+  const year = d.getFullYear()
+  return `${day}/${month}/${year}`
+}
+
 export function renderWorkout(currentWorkout, onAddSet, workouts = []) {
   const workoutDiv = document.getElementById("workout")
   workoutDiv.innerHTML = ""
@@ -39,16 +48,26 @@ export function renderWorkout(currentWorkout, onAddSet, workouts = []) {
     workouts.forEach((w, index) => {
       const item = document.createElement("div")
       item.className = "history-item"
-      item.textContent = `${w.date} - ${w.exercises.length} exos`
+      const sessionNumber = index + 1
+      item.textContent = `Séance ${sessionNumber} - ${formatDate(w.date)}`
+
       item.addEventListener("click", () => {
+        // Afficher les détails complets
         workoutDiv.innerHTML = `<h2>Détails de la séance</h2>` +
           w.exercises.map(ex => `
             <h3>${ex.name}</h3>
             <ul>
               ${ex.sets.map(s => `<li>${s.reps} reps @ ${s.weight} kg</li>`).join("")}
             </ul>
-          `).join("")
+          `).join("") +
+          `<button id="back-home">⬅ Retour</button>`
+
+        // Bouton retour
+        document.getElementById("back-home").addEventListener("click", () => {
+          renderWorkout(currentWorkout, onAddSet, workouts)
+        })
       })
+
       historyDiv.appendChild(item)
     })
 
