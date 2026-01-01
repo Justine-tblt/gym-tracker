@@ -73,3 +73,7 @@ export function renderWorkout(currentWorkout, onAddSet, workouts = []) {
     workoutDiv.appendChild(historyDiv)
   }
 }
+if (!Array.isArray(workouts)) {
+  console.error("workouts n'est pas un tableau", workouts)
+  return
+}

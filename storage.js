@@ -52,3 +52,26 @@ export async function loadData() {
     }
   }
 }
+export async function loadData() {
+  try {
+    const snapshot = await getDocs(collection(db, WORKOUTS_COLLECTION))
+
+    const workouts = []
+
+    snapshot.forEach(docSnap => {
+      workouts.push(docSnap.data())
+    })
+
+    return {
+      currentWorkout: null,
+      workouts: workouts // ✅ TOUJOURS un tableau
+    }
+
+  } catch (error) {
+    console.error("Erreur Firebase :", error)
+    return {
+      currentWorkout: null,
+      workouts: [] // ✅ fallback sûr
+    }
+  }
+}
