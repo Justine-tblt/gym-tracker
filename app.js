@@ -11,7 +11,7 @@ const startBtn = document.getElementById("start-workout")
 const finishBtn = document.getElementById("finish-workout")
 const selectWorkout = document.getElementById("select-workout")
 
-// 🔹 INIT ASYNC
+// 🔹 INIT
 async function init() {
   const data = await loadData()
   if (data) appData = data
@@ -21,10 +21,17 @@ async function init() {
 
 init()
 
-// 🔹 Démarrer une séance
+// 🔹 NOUVELLE SÉANCE ✅
 startBtn.addEventListener("click", async () => {
-  const templateIndex = selectWorkout.value
-  appData.currentWorkout = startWorkout(templates[templateIndex])
+  const templateIndex = Number(selectWorkout.value)
+  const template = templates[templateIndex]
+
+  if (!template) {
+    console.error("Template introuvable", templateIndex)
+    return
+  }
+
+  appData.currentWorkout = startWorkout(template)
 
   await saveData(appData)
   renderWorkout(appData.currentWorkout, onAddSet, onSelectHistory)
@@ -38,7 +45,7 @@ async function onAddSet(exIndex, reps, weight) {
   renderWorkout(appData.currentWorkout, onAddSet, onSelectHistory)
 }
 
-// 🔹 Terminer la séance ✅
+// 🔹 Terminer séance
 finishBtn.addEventListener("click", async () => {
   if (!appData.currentWorkout) return
 
@@ -49,7 +56,7 @@ finishBtn.addEventListener("click", async () => {
   renderWorkout(null, onAddSet, onSelectHistory)
 })
 
-// 🔹 Cliquer sur une séance de l’historique
+// 🔹 Historique
 function onSelectHistory(workout) {
   renderWorkout(workout, onAddSet, onSelectHistory, true)
 }
