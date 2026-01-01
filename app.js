@@ -2,43 +2,54 @@ import { templates, startWorkout } from "./workout.js"
 import { loadData, saveData } from "./storage.js"
 import { renderWorkout } from "./ui.js"
 
-// Chargement ou initialisation des données
-let appData = loadData() || {
+let appData = {
   currentWorkout: null,
   workouts: []
 }
 
-// Récupération des boutons et select
 const startBtn = document.getElementById("start-workout")
 const finishBtn = document.getElementById("finish-workout")
 const selectWorkout = document.getElementById("select-workout")
 
-// Fonction pour ajouter une série
-function onAddSet(exIndex, reps, weight) {
-  if (!appData.currentWorkout) return
-  appData.currentWorkout.exercises[exIndex].sets.push({ reps, weight })
-  saveData(appData)
-  renderWorkout(appData.currentWorkout, onAddSet, appData.workouts)
+// 🔹 INIT ASYNC
+async function init() {
+  const data = await loadData()
+  if (data) appData = data
+
+  renderWorkout(appData.currentWorkout, onAddSet, onSelectHistory)
 }
 
-// Démarrer une nouvelle séance
-startBtn.addEventListener("click", () => {
-  const templateIndex = Number(selectWorkout.value)
+init()
+
+// 🔹 Démarrer une séance
+startBtn.addEventListener("click", async () => {
+  const templateIndex = selectWorkout.value
   appData.currentWorkout = startWorkout(templates[templateIndex])
-  saveData(appData)
-  renderWorkout(appData.currentWorkout, onAddSet, appData.workouts)
+
+  await saveData(appData)
+  renderWorkout(appData.currentWorkout, onAddSet, onSelectHistory)
 })
 
-// Terminer la séance
-finishBtn.addEventListener("click", () => {
+// 🔹 Ajouter une série
+async function onAddSet(exIndex, reps, weight) {
+  appData.currentWorkout.exercises[exIndex].sets.push({ reps, weight })
+
+  await saveData(appData)
+  renderWorkout(appData.currentWorkout, onAddSet, onSelectHistory)
+}
+
+// 🔹 Terminer la séance ✅
+finishBtn.addEventListener("click", async () => {
   if (!appData.currentWorkout) return
+
   appData.workouts.push(appData.currentWorkout)
   appData.currentWorkout = null
-  saveData(appData)
-  renderWorkout(null, onAddSet, appData.workouts)
+
+  await saveData(appData)
+  renderWorkout(null, onAddSet, onSelectHistory)
 })
 
-// Restaurer la séance en cours au chargement
-if (appData.currentWorkout) {
-  renderWorkout(appData.currentWorkout, onAddSet, appData.workouts)
+// 🔹 Cliquer sur une séance de l’historique
+function onSelectHistory(workout) {
+  renderWorkout(workout, onAddSet, onSelectHistory, true)
 }
